@@ -72,3 +72,8 @@ def convert_pdf():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug = True)
+
+
+@app.route('/download/<filename>')
+def download_page(filename):
+    return render_template('download.html', filename=filename)

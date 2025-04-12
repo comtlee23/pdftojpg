@@ -33,6 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             // 변환 성공 시 다운로드 링크 보여주기
             if (data.success && data.download_url) {
+            // 이미지 파일 이름 추출
+                const urlParts = data.download_url.split('/');
+                const imageFilename = urlParts[urlParts.length - 1];
+
+            // 다운로드 페이지로 리다이렉트
+                window.location.href = `/download/${imageFilename}`;
+            }
+
+            if (data.success && data.download_url) {
                 downloadLink.href = data.download_url;
                 resultDiv.style.display = "block";
             } else {

@@ -90,3 +90,19 @@ button:hover {
     background-color: #409eff;
     color: white;
 }
+
+.download-button {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: 2px solid #409eff;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #409eff;
+    transition: all 0.3s ease;
+}
+
+.download-button:hover {
+    background-color: #409eff;
+    color: white;
+}
