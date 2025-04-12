@@ -1,14 +1,12 @@
-// 파일 위치: static/script.js
+// static/script.js
 
 document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("upload-form");
-    const resultDiv = document.getElementById("result");
-    const downloadLink = document.getElementById("download-link");
+    const form = document.getElementById("uploadForm");
+    const fileInput = document.getElementById("pdfFile");
 
     form.addEventListener("submit", function (e) {
-        e.preventDefault(); // 폼 기본 동작(새로고침) 방지
+        e.preventDefault(); // 새로고침 방지
 
-        const fileInput = document.getElementById("pdf-file");
         const file = fileInput.files[0];
 
         if (!file) {
@@ -19,38 +17,27 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData();
         formData.append("pdf_file", file);
 
-        // 서버로 PDF 파일 전송
+        // 서버에 PDF 업로드
         fetch("/convert", {
             method: "POST",
             body: formData
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("서버 오류가 발생했습니다.");
-            }
-            return response.json();  // 서버에서 JSON 형태로 응답 기대
-        })
+        .then(response => response.json())
         .then(data => {
-            // 변환 성공 시 다운로드 링크 보여주기
             if (data.success && data.download_url) {
-            // 이미지 파일 이름 추출
+                // 파일 이름 추출 (예: /static/output/converted_20250412100000.jpg → converted_20250412100000.jpg)
                 const urlParts = data.download_url.split('/');
-                const imageFilename = urlParts[urlParts.length - 1];
+                const filename = urlParts[urlParts.length - 1];
 
-            // 다운로드 페이지로 리다이렉트
-                window.location.href = `/download/${imageFilename}`;
-            }
-
-            if (data.success && data.download_url) {
-                downloadLink.href = data.download_url;
-                resultDiv.style.display = "block";
+                // 다운로드 페이지로 리다이렉트
+                window.location.href = `/download/${filename}`;
             } else {
-                alert("변환에 실패했습니다.");
+                alert("변환에 실패했습니다: " + (data.error || "알 수 없는 오류"));
             }
         })
         .catch(error => {
             console.error("에러:", error);
-            alert("변환 중 오류가 발생했습니다.");
+            alert("서버와 통신 중 오류가 발생했습니다.");
         });
     });
 });
