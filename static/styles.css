@@ -1,0 +1,92 @@
+/* 파일 위치: static/styles.css */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
+
+label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+input[type="file"] {
+    display: block;
+    margin: 0 auto 20px auto;
+    padding: 8px;
+    font-size: 15px;
+    border: 2px solid #dcdfe6;
+    border-radius: 8px;
+    background-color: #fafafa;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+input[type="file"]:hover {
+    border-color: #409eff;
+    background-color: #f0f8ff;
+}
+
+button {
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #409eff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #317ef3;
+}
+
+#result {
+    margin-top: 30px;
+}
+
+#download-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 15px;
+    border: 2px solid #409eff;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #409eff;
+    transition: all 0.3s ease;
+}
+
+#download-link:hover {
+    background-color: #409eff;
+    color: white;
+}
