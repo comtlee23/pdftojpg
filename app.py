@@ -1,7 +1,7 @@
 # app.py
 
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from pdf2image import convert_from_path
 from datetime import datetime
@@ -13,7 +13,7 @@ OUTPUT_FOLDER = 'static/output'
 ALLOWED_EXTENSIONS = {'pdf'}
 
 # poppler 경로 (macOS/Linux는 None, Windows는 경로 지정 필요)
-POPPLER_PATH = None
+POPPLER_PATH = None  # 예: r"C:\poppler\bin"
 
 app = Flask(__name__, static_folder='static', template_folder='template')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -32,16 +32,16 @@ def allowed_file(filename):
 def index():
     return render_template('index.html')
 
-# ===== PDF → 이미지 변환 & ZIP 압축 =====
+# ===== PDF → 이미지 변환 & ZIP 압축 후 다운로드 페이지로 리디렉트 =====
 @app.route('/convert', methods=['POST'])
 def convert_pdf():
     if 'pdf_file' not in request.files:
-        return jsonify({'success': False, 'error': 'No file part'})
+        return "No file part", 400
 
     file = request.files['pdf_file']
 
     if file.filename == '':
-        return jsonify({'success': False, 'error': 'No selected file'})
+        return "No selected file", 400
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -49,14 +49,14 @@ def convert_pdf():
         file.save(filepath)
 
         try:
-            # 고유한 파일 이름 기반 설정
+            # 고유 파일 이름 생성
             timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
             base_name = f"converted_{timestamp}"
 
-            # PDF → 이미지 변환 (모든 페이지)
+            # PDF → 이미지 변환
             images = convert_from_path(filepath, dpi=200, poppler_path=POPPLER_PATH)
 
-            # JPG 이미지 저장
+            # 이미지 저장
             image_filenames = []
             for i, image in enumerate(images):
                 image_filename = f"{base_name}_page_{i+1}.jpg"
@@ -64,7 +64,7 @@ def convert_pdf():
                 image.save(image_path, 'JPEG')
                 image_filenames.append(image_path)
 
-            # 이미지들을 ZIP 파일로 묶기
+            # ZIP 압축 생성
             zip_filename = f"{base_name}.zip"
             zip_path = os.path.join(app.config['OUTPUT_FOLDER'], zip_filename)
             with ZipFile(zip_path, 'w') as zipf:
@@ -72,17 +72,14 @@ def convert_pdf():
                     arcname = os.path.basename(img_path)
                     zipf.write(img_path, arcname=arcname)
 
-            # 클라이언트에 다운로드 링크 전달
-            return jsonify({
-                'success': True,
-                'download_url': f"/static/output/{zip_filename}"
-            })
+            # ✅ 리디렉션: 다운로드 페이지로 이동
+            return redirect(url_for('download_page', filename=zip_filename))
 
         except Exception as e:
             print("변환 오류:", e)
-            return jsonify({'success': False, 'error': str(e)})
+            return f"변환 중 오류 발생: {str(e)}", 500
 
-    return jsonify({'success': False, 'error': 'Invalid file'})
+    return "Invalid file", 400
 
 # ===== 다운로드 페이지 라우트 =====
 @app.route('/download/<filename>')
