@@ -15,7 +15,8 @@ ALLOWED_EXTENSIONS = {'pdf'}
 # Poppler 경로 설정 (윈도우 사용자만 지정 필요)
 # Windows인 경우 아래 경로로 교체하세요 (예시)
 # POPPLER_PATH = r"C:\poppler-24.02.0\Library\bin"
-POPPLER_PATH = None  # macOS/Linux는 None 그대로 사용
+POPPLER_PATH = r"C:\poppler-24.02.0\Library\bin"
+  # macOS/Linux는 None 그대로 사용
 
 app = Flask(__name__, static_folder='static', template_folder='template')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
